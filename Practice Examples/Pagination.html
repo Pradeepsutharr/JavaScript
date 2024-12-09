@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      button.active {
+        background-color: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+    <div class="pages"></div>
+
+    <script>
+      const data = [
+        "Item 1",
+        "Item 2",
+        "Item 3",
+        "Item 4",
+        "Item 5",
+        "Item 6",
+        "Item 7",
+        "Item 8",
+        "Item 9",
+        "Item 10",
+        "Item 11",
+        "Item 12",
+        "Item 13",
+        "Item 14",
+        "Item 15",
+      ];
+
+      let currentpage = 1;
+      let itemsPerPage = 5;
+      let totalPages = Math.ceil(data.length / itemsPerPage);
+
+      function Displaypage(page) {
+        let start = (currentpage - 1) * itemsPerPage;
+        let End = Math.min(start + itemsPerPage, data.length);
+        const itemsOnPage = data.slice(start, End);
+
+        let container = (document.getElementById("container").innerHTML = `
+          <h2>Page ${currentpage}</h2>
+          ${itemsOnPage.map((item) => `<div>${item}</div>`).join("")}`);
+        updatePagination(page);
+      }
+
+      function Pages() {
+        const pages = document.querySelector(".pages");
+        pages.innerHTML = "";
+
+        for (let pageCount = 1; pageCount <= totalPages; pageCount++) {
+          const button = document.createElement("button");
+          button.textContent = pageCount;
+          if (currentpage === pageCount) {
+            button.style.backgroundColor = "red";
+          }
+          button.onclick = () => {
+            currentpage = pageCount;
+            Displaypage();
+            Pages();
+          };
+          pages.appendChild(button);
+        }
+      }
+
+      function updatePagination(activePage) {
+        const buttons = container.querySelectorAll("button");
+        buttons.forEach((button, index) => {
+          button.classList.toggle("active", index + 1 === activePage);
+        });
+      }
+      Displaypage();
+      Pages();
+    </script>
+  </body>
+</html>
