@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .container {
+        display: grid;
+        place-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <input type="text" name="" id="task-input" />
+        <button id="add-btn">Add Task</button>
+      </div>
+
+      <ul id="task-list"></ul>
+    </div>
+  </body>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const input = document.querySelector("#task-input");
+      const AddBtn = document.querySelector("#add-btn");
+      const TaskList = document.querySelector("#task-list");
+
+      let Tasks = JSON.parse(localStorage.getItem("Tasks")) || [];
+
+      Tasks.forEach((task) => {
+        RenderTask(task);
+      });
+
+      AddBtn.addEventListener("click", () => {
+        const TaskText = input.value.trim();
+        if (TaskText === "") return alert("Task-Name can't be empty");
+
+        const NewTask = {
+          id: Date.now(),
+          Text: TaskText,
+          Done: false,
+        };
+
+        Tasks.push(NewTask);
+        SaveTask();
+        RenderTask(NewTask);
+        input.value = "";
+
+        console.log(Tasks);
+      });
+
+      function RenderTask(task) {
+        const li = document.createElement("li");
+        li.setAttribute("data-id", task.id);
+        li.innerHTML = task.Text;
+
+        const DelBtn = document.createElement("button");
+        DelBtn.innerText = "Delete";
+
+        li.appendChild(DelBtn);
+        TaskList.appendChild(li);
+
+        DelBtn.addEventListener("click", (e) => {
+          // e.preventDefault();
+          e.stopPropagation();
+          Tasks = Tasks.filter((t) => t.id !== task.id);
+          li.remove();
+          SaveTask();
+        });
+
+        console.log(task);
+        console.log(li);
+      }
+
+      function SaveTask() {
+        localStorage.setItem("Tasks", JSON.stringify(Tasks));
+      }
+    });
+  </script>
+</html>
